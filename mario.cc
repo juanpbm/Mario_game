@@ -66,8 +66,8 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 		return 1;
 	}
 
-	if (count_jump == 1 && board[mario[0]+movment][mario[1]+movment] == "|"){
-		mario[0] -= movment*2;
+	if (count_jump == 1 && board[mario[0]+1][mario[1]+movment] == "|"){
+		mario[0] -= 2;
 		mario[1] += movment;
 		counter += movment;
 		up = 1;
@@ -99,23 +99,23 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 	
 	if (up == 1){
 		
-		if (count_jump == 1 && movment == 1 && board [mario[0]+1][mario[1]+2] == "B"){
+		if (count_jump == 1 && board [mario[0]+1][mario[1]+movment*2] == "B"){
 			board[mario[0]][mario[1]+1] == "";
 			mario[0] -=1;
-			mario[1] +=2; 
-			counter ++;
+			mario[1] +=movment*2; 
+			counter += movment;
 			up = 0;
 		}
 
 	}
 	
-	if (count_jump == 0 and board [mario[0]+1][mario[1]] == ""){
-		if (board [mario[0]+1][mario[1]-1] == "B"){
+	if (count_jump == 0 && board [mario[0]+1][mario[1]] == ""){
+		if (board [mario[0]+1][mario[1]-movment] == "B"){
 			mario[0] += 3;
 		}else{
 			mario[0] += 2;
 			mario[1] ++;
-			counter ++;
+			counter += movment;
 		}
 	}
 
@@ -151,7 +151,7 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
 			mario[0] = 14;
 			mario[1] = 0;
 			monster[0][0] = 14;
-			monster[0][1] = 4;
+			monster[0][1] = 3;
 			monster[0][2] = -1;
 			monster[0][3] = 0;
 			monster[1][3] = 1;
@@ -161,12 +161,12 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
 				board [15][i] = "-";
 			}
 			board [14][0] = "m";
-			board [14][4] = "X";
-	        	board [14][17] = "|";
-        		board [14][19] = "|";
-			board [15][17] = "|";
-        		board [15][19] = "|";
-			board [13][18] = "_";
+			board [14][3] = "X";
+	        	board [14][16] = "|";
+        		board [14][18] = "|";
+			board [15][16] = "|";
+        		board [15][18] = "|";
+			board [13][17] = "_";
 			board [12][10] = "B";
 			board [12][11] = "?";
 			board [12][12] = "B";
@@ -204,7 +204,7 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
 			board [13][21] = "_";
 			board [14][8] = "X";
 			board [14][18] = "X";
-  			board [14][17] = "X";
+  			board [14][16] = "X";
 			monster[0][0] = 14;
 			monster[0][1] = 8;
 			monster[0][2] = -1;
@@ -214,7 +214,7 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
 			monster[1][2] = -1;
 			monster[1][3] = 0;
 			monster[2][0] = 14;
-			monster[2][1] = 17;
+			monster[2][1] = 16;
 			monster[2][2] = -1;
 			monster[2][3] = 0;
 			monster[3][3] = 1;
@@ -322,6 +322,7 @@ int main (){
 									monster_check(board);
 									mario [0]++;
 									board [mario[0]][mario[1]] = "m";
+									done = check_mario(board,mario,0,count_jump);
 									count_jump = 2;
 	
 							break;	
