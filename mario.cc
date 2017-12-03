@@ -44,7 +44,7 @@ void clean_board(){
 }
 void monster_check (string (&board)[16][25]){
 	for (int i = 0;i < 4;i++){
-		if (monster[i] [3] == 0){
+		if (monster[i][3] == 0){
 			if (board [monster[i][0]][monster[i][1]+monster[i][2]] == "|" || monster[i][1] == 0 || monster[i][1] == 24){
 				monster[i][2] *= -1;
 			}
@@ -59,10 +59,12 @@ void monster_check (string (&board)[16][25]){
 
 }
 int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int count_jump ){
+
 //deadth by monster
 	if (board[mario[0]][mario[1]+movment] == "X" || board[mario[0]][mario[1]] == "X"){
 		return 1;
 	}
+
 // die in esc and move to the next one 
 	if (top == 3 && esc == 0 &&  board [mario[0]+movment][mario[1]+movment] == "" && count_jump == 0){
 		return 1;
@@ -72,7 +74,8 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 		counter += 3;
 		esc = 1;
 		top = -3;
-	} 
+	}
+ 
 //go up the pipe
 	if (esc == 0 && count_jump == 1 && board[mario[0]+1][mario[1]+movment] == "|"){
 		mario[0] -= 2;
@@ -84,33 +87,28 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 	}else {
 		esc = 0;
 	}
+
 //kill monster
 	if (count_jump == 1 &&  board[mario[0]+1][mario[1]] == "X"){
 		coins ++;
-		if (mario[0]+1 == monster[0][0] && mario[1] == monster[0][1]){
-			monster[0][3] = 1;
-			board [monster[0][0]][monster[0][1]] = "*";
-		}
-		if (mario[0]+1 == monster[1][0] && mario[1] == monster[1][1]){
-			monster[1][3] = 1;
-			board [monster[1][0]][monster[1][1]] = "*";
-		}	
-		if (mario[0]+1 == monster[2][0] && mario[1] == monster[2][1]){
-			monster[2][3] = 1;
-			board [monster[2][0]][monster[2][1]] = "*";
-		}
-		if (mario[0]+1 == monster[3][0] && mario[1] == monster[3][1]){
-			monster[3][3] = 1;
-			board [monster[3][0]][monster[3][1]] = "*";
-		}
-		for (int i = 1; i <=3; i++){
-			temp = board [mario[0]-i][mario[1]];
-			board [mario[0]-i][mario[1]] = "C";
-			Print (board);
-			usleep(300000);
-			board [mario[0]-i][mario[1]] = temp;
+		for (int p = 0; p < 4; p++){
+			if (mario[0]+1 == monster[p][0] && mario[1] == monster[p][1]){
+				monster[p][3] = 1;
+				board [monster[p][0]][monster[p][1]] = "*";
+				for (int i = 1; i <=3; i++){
+					temp = board [mario[0]-i][mario[1]];
+					board [mario[0]-i][mario[1]] = "C";
+					Print (board);
+					usleep(300000);
+					board [mario[0]-i][mario[1]] = temp;
+				}
+				board [monster[p][0]][monster[p][1]] = "";
+				monster[p][0] = 0;
+				monster[p][1] = 0;
+			}
 		}
 	}
+
 //go up the box	
 	if (up == 1){
 
@@ -124,6 +122,7 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 		}
 
 	}
+
 // go down pipe or box
 	if (count_jump == 0 && board [mario[0]+1][mario[1]] == "" && counter < 175){
 		if (board [mario[0]+1][mario[1]-movment] == "B"){
@@ -135,6 +134,7 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 		}
 		top = 0;
 	}
+
 // destroy box
 	if ( board [mario[0]-1][mario[1]] == "B" && count_jump == 1 && movment == 0){
 		board [mario[0]-1][mario[1]] = "";
@@ -152,6 +152,7 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 		}
 		Print (board);
 	}
+
 // lives
 	if ( board [mario[0]-1][mario[1]] == "V" && count_jump == 1 && movment == 0){
 		board [mario[0]-1][mario[1]] = "";
@@ -165,15 +166,18 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 		}
 		Print (board);
 	}
+
 // die in voide
 	if (count_jump == 0  && board [mario[0]+1][mario[1]] == " "){
 		return 1;
 	}
+
 //jump voide 
 	if (count_jump == 1 && board [mario[0]+2][mario[1]] == " "){
 		mario[1] += movment;
         	counter += movment;
 	}
+
 //fnal map	
 	if (counter > 175 && top == 6 && mario [1] == 13){
 		mario [0] = 3;
@@ -188,7 +192,7 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 
 		}
 		board [11][14] = "";
-		mario [0] = 9;
+		mario [0] = 10;
 		mario [1] = 15;
 		board [mario[0]][mario[1]] = "w";
 		Print (board);
@@ -399,27 +403,27 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
         		board [15][23] = "|";
 			board [13][22] = "_";
 			board [10][20] = "B";
-			board [14][10] = "X";
-			board [14][12] = "X";
-			board [14][16] = "X";
-			board [14][18] = "X";
+			board [14][9] = "X";
+			board [14][11] = "X";
+			board [14][17] = "X";
+			board [14][19] = "X";
 			monster[0][0] = 14;
-			monster[0][1] = 10;
+			monster[0][1] = 9;
 			monster[0][2] = -1;
 			monster[0][3] = 0;
 			monster[1][0] = 14;
-			monster[1][1] = 12;
+			monster[1][1] = 11;
 			monster[1][2] = -1;
 			monster[1][3] = 0;
 			monster[2][0] = 14;
-			monster[2][1] = 16;
+			monster[2][1] = 17;
   			monster[2][2] = -1;
 			monster[2][3] = 0;
 			monster[3][0] = 14;
-			monster[3][1] = 18;
+			monster[3][1] = 19;
 			monster[3][2] =-1;
 			monster[3][3] = 0;
-		
+
 		break;
 		case 100:
 			clean_board();
@@ -539,10 +543,10 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
 			board [15][13] = "|";
         		board [15][15] = "|";
 			board [13][14] = "_";			
-	        	board [12][17] = "B";
-        		board [12][18] = "?";
-			board [12][19] = "?";
-        		board [12][20] = "B";
+	        	board [12][16] = "B";
+        		board [12][17] = "?";
+			board [12][18] = "?";
+        		board [12][19] = "B";
 			board [14][16] = "X";
 			board [14][18] = "X";
 	        	board [14][21] = "|";
@@ -664,7 +668,7 @@ int main (){
 	 			boards(counter,board, mario);
 				if (counter == 0){
 					Print (board);
-					counter = 99;
+					counter = 1;
 				}
 				cout <<"movement\n";
 				cin >> move;
