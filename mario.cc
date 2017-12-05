@@ -22,7 +22,7 @@ int top = 0;
 string temp;
 void Print (string v[16][25]){
 	cout << string (100,'\n');
-	cout << "Coins: "<<coins<< "\nLives: "<<lives<< endl<<counter<<endl;
+	cout << "Coins: "<<coins<< "\nLives: "<<lives<< endl<<top<<endl;
 	for (int row = 0; row < 16; row ++){
 		for (int col = 0; col < 25; col++ ){
 			if (v[row][col] != ""){
@@ -68,10 +68,10 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 // die in esc and move to the next one 
 	if (top == 3 && esc == 0 &&  board [mario[0]+movment][mario[1]+movment] == "" && count_jump == 0){
 		return 1;
-	}else if (top == 3 && count_jump == 1 && esc == 0 && counter < 175){
+	}else if ((top == 3) && count_jump == 1 && esc == 0 && counter < 175 && (movment==1 || movment == -1)){
 		board [mario[0]][mario[1]] = "";
-		mario [1] += 3;
-		counter += 3;
+		mario [1] += 3*movment;
+		counter += 3*movment;
 		esc = 1;
 		top = -3;
 	}
@@ -116,7 +116,7 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 			board[mario[0]][mario[1]+1] == "";
 			mario[0] -=1;
 			mario[1] +=movment*2; 
-			counter += movment;
+			counter += 2*movment;
 			up = 0;
 			top = 0;
 		}
@@ -543,8 +543,7 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
 			board [15][13] = "|";
         		board [15][15] = "|";
 			board [13][14] = "_";			
-	        	board [12][16] = "B";
-        		board [12][17] = "?";
+	        	board [12][17] = "?";
 			board [12][18] = "?";
         		board [12][19] = "B";
 			board [14][16] = "X";
@@ -668,7 +667,7 @@ int main (){
 	 			boards(counter,board, mario);
 				if (counter == 0){
 					Print (board);
-					counter = 1;
+					counter = 99;
 				}
 				cout <<"movement\n";
 				cin >> move;
@@ -784,7 +783,7 @@ int main (){
 					counter = 0;
 					board [mario[0]][mario[1]]="";
 					cout << string(100,'\n');
-					cout << "\nYou moron, you lost a live. Lives remaining:"<< lives<<endl;
+					cout << "\nYou lost a live. Lives remaining:"<< lives<<endl;
 					usleep(1500000); 
 					top = 0;
 				}	
@@ -794,7 +793,7 @@ int main (){
 				}
 			}
 			if (done == 1)
-				cout << "game over you lost shame on you\n";
+				cout << "game over you lost \n";
 			cout << " wanna play again (0 yes 1 no)";
 			cin >> MM;
 			lives = 3;
