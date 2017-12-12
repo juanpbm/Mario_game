@@ -2,13 +2,14 @@
 #include <string>
 #include <unistd.h>
 #include <stdio.h>
+#include "wiimote.h"
 using namespace std;
-
+Wiimote wiimote;
 string board[16][25] = {};
 int counter = 0;
 int done = 0;
 char x;
-char move;
+int  move;
 int count_jump = 0;
 int mario[2];
 int monster[4][4] = {};
@@ -20,6 +21,7 @@ int up = 0;
 int esc = 0;
 int top = 0;
 string temp;
+int f;
 void Print (string v[16][25]){
 	cout << string (100,'\n');
 	cout << "Coins: "<<coins<< "\nLives: "<<lives<< endl<<top<<endl;
@@ -129,7 +131,7 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 			mario[0] += 3;
 		}else{
 			mario[0] += 2;
-			mario[1] ++;
+			mario[1] += movment;
 			counter += movment;
 		}
 		top = 0;
@@ -161,7 +163,8 @@ int check_mario (string (&board)[16][25], int (&mario)[2], int movment, int coun
 			temp = board [mario[0]-i][mario[1]];
 			board [mario[0]-i][mario[1]] = "<L>";
 			Print (board);
-			usleep(300000);
+	
+		usleep(300000);
 			board [mario[0]-i][mario[1]] = temp;
 		}
 		Print (board);
@@ -394,15 +397,15 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
         		board [12][13] = "B";
 			board [12][18] = "B";
 	        	board [12][19] = "B";
-        		board [10][17] = "B";
-			board [10][18] = "?";
-			board [10][19] = "?";
+        		board [9][17] = "B";
+			board [9][18] = "?";
+			board [9][19] = "?";
 	        	board [14][21] = "|";
         		board [14][23] = "|";
 			board [15][21] = "|";
         		board [15][23] = "|";
 			board [13][22] = "_";
-			board [10][20] = "B";
+			board [9][20] = "B";
 			board [14][9] = "X";
 			board [14][11] = "X";
 			board [14][17] = "X";
@@ -650,14 +653,14 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
 
 }
 int main (){
-	int MM = 0;
-	while (MM == 0){
+	int MM = 1;
+	while (MM == 1){
 		cout <<  "Main Menu \n 1. Start\n 2. How To Play\n 3. Exit\n";
-		cin >> opt;	
+		opt = wiimote.Listen();	
 	
 		switch (opt){
 	
-			case 1:
+			case 151:
 			{
 			while (lives > 0){
 				if (coins == 100){
@@ -667,12 +670,12 @@ int main (){
 	 			boards(counter,board, mario);
 				if (counter == 0){
 					Print (board);
-					counter = 99;
+					counter = 1;
 				}
 				cout <<"movement\n";
-				cin >> move;
+				move = wiimote.Listen();
 				switch (move){
-					case 'd'://right
+					case 106://right
 						if (mario [1] != 24 && board[mario[0]][mario[1]+1] != "|"){
 							board [mario[0]][mario[1]] = "";
 							mario [1] ++;
@@ -683,7 +686,7 @@ int main (){
 						}
 					break;
 	
-					case 'a'://left
+					case 105://left
 						if (mario [1] != 0  && board[mario[0]][mario[1]-1] != "|"){
 							board [mario[0]][mario[1]] = "";
 							mario [1] --;
@@ -694,7 +697,7 @@ int main (){
 						}
 					break;
 		
-					case 's'://down
+					case 108://down
 						if (mario [0] != 14 && count_jump == 1){	
 							board [mario[0]][mario[1]] = "";
 							mario [0]++;
@@ -705,7 +708,7 @@ int main (){
 	
 					break;
 	
-					case 'w'://jump
+					case 103://jump
 						
 						count_jump = 1;
 						board [mario[0]][mario[1]] = "";
@@ -713,9 +716,11 @@ int main (){
 						board [mario[0]][mario[1]] = "m";
 						Print (board);
 						done = check_mario(board,mario,0,count_jump);
-						if (cin >> move);
+						f = 0;
+						while (f == 0){
+						move = wiimote.Listen();
 						switch (move){
-							case 'd'://right
+							case 106://right
 								if (mario [1] != 24 && board[mario[0]][mario[1]+1] != "|"){
 									board [mario[0]][mario[1]] = "";
 									monster_check(board);
@@ -726,10 +731,11 @@ int main (){
 									}
 									done = check_mario(board,mario,1,count_jump);
 									counter ++;
+									f = 1;
 								}
 							break;
 
-							case 'a'://left
+							case 105://left
 								if (mario [1] != 0  && board[mario[0]][mario[1]-1] != "|"){
 									board [mario[0]][mario[1]] = "";
 									monster_check(board);
@@ -739,20 +745,22 @@ int main (){
 										board [mario[0]][mario[1]] = "m";
 									}
 									done = check_mario(board,mario,-1,count_jump);
-									counter --;			
+									counter --;
+									f =1;			
 								}
 							break;
 	
-							case 's'://down	change to deafault
+							case 108://down	change to deafault
 									board [mario[0]][mario[1]] = "";
 									monster_check(board);
 									mario [0]++;
 									board [mario[0]][mario[1]] = "m";
 								//	done = check_mario(board,mario,3,count_jump);
 									count_jump = 2;
-	
-							break;	
+									f = 1;
+							break;					
 						
+						}
 						}
 						Print (board);
 						usleep(500000);
@@ -765,16 +773,16 @@ int main (){
 							count_jump = 0;
 					break;
 				
-					case 'x':
+					case 48:
 						cout << "thx for playing\n";
 						return 0;
 					break;
 				
 					default:
-						monster_check(board);
+//						monster_check(board);
 					break;
 				}
-
+			move = 0;
 			if (done == 0){
 				Print (board);
 			}
@@ -786,6 +794,7 @@ int main (){
 					cout << "\nYou lost a live. Lives remaining:"<< lives<<endl;
 					usleep(1500000); 
 					top = 0;
+					done = 0;
 				}	
 				if (done == 3){
 					cout << " Congratulations !!! you've won!!!";
@@ -794,22 +803,19 @@ int main (){
 			}
 			if (done == 1)
 				cout << "game over you lost \n";
-			cout << " wanna play again (0 yes 1 no)";
-			cin >> MM;
-			lives = 3;
 			break;
 			}	
-			case 2:
+			case 156:
 			{
-				cout << "Welcome to Super NUMario\n\n      Contols:\n      e = up\n      f = right\n      s = left\n      x = end game\n\n when you press e it should be fallowed by f s or d to jump and move left right or just go down to the same position you started.\n\n m is mario\n X are monsters be aware they are closer than it seams\n C are coins\n B are regular boxed that can hide coins\n ? may have special avilities or coins.  ";
-				cin >> MM;
+				cout << "Welcome to Super NUMario\n\n  \n when you press up it should be fallowed by Right, Left  or Down to jump and move left right or just go down to the same position you started.\n\n m is mario\n X are monsters be aware they are closer than it seams\n C are coins\n B are regular boxes\n ? have coins.\n be aware of the floor.  ";
+				 MM = wiimote.Listen();
 			break;
 			}
 
-			case 3:
+			case 48:
 			{
 				cout << "Thanks For playing\n";
-				MM = 1;
+				MM = 2;
 			break;	
 			}
 		}
