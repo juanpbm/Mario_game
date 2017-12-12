@@ -655,7 +655,11 @@ void boards (int counter, string (&board)[16][25],int (&mario) [2]){
 int main (){
 	int MM = 1;
 	while (MM == 1){
+<<<<<<< HEAD
 		cout <<  "Main Menu \n +. Start\n -. How To Play\n A. Exit\n";
+=======
+		cout <<  "Main Menu \n 1. Start\n 2. How To Play\n 3. Exit\n";
+>>>>>>> 32a5a88f17e151647b0bc50bdeee3773d310c37c
 		opt = wiimote.Listen();	
 	
 		switch (opt){
