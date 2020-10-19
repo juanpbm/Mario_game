@@ -1,5 +1,3 @@
-# project-project-group-7
-
 ## Walter Galdamez and Juan Pablo Bernal 
 
 ## Title: NEU Super Mario
